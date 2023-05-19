@@ -1,0 +1,33 @@
+version: '3.7'
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:
+
+  backend:
+    build:
+      context: ./backend/
+      target: build-stage
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/src:/usr/app/src
+      - backend_node_modules:/usr/app/node_modules
+    environment:
+      - NODE_ENV=development
+    entrypoint: [ "yarn" ]
+    command: [ "dev" ]
+
+  frontend:
+    build:
+      context: ./frontend/
+      target: develop-stage
+      args:
+        - API_URL=http://localhost:3000
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./frontend/app/src:/usr/app/src
+      - backend_node_modules:/app/node_modules
+    entrypoint: [ "yarn" ]
+    command: [ "start" ]
